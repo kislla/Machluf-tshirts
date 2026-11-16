@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הזמנת חולצות צוותיות</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="בוחרים פרינט, סוג חולצה ומידה, משלמים בפייבוקס ושולחים.">
+<meta property="og:title" content="הזמנת חולצות צוותיות">
+<meta property="og:description" content="בוחרים פרינט, סוג חולצה ומידה, משלמים בפייבוקס ושולחים.">
+<meta property="og:image" content="https://kislla.github.io/Machluf-tshirts/img/mesayaat-oversize-front.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Karantina:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one narrow column read top to bottom, a printer's colour bar and
+   registration marks as the only ornament, four numbered steps 01-04. */
+:root {
+  --bg: #eceef1;
+  --surface: #ffffff;
+  --ink: #12161c;
+  --muted: #586271;
+  --line: #cfd5dd;
+  --accent: #1d3bd8;
+  --accent-ink: #ffffff;
+  --flag: #ffd23f;
+  --flag-ink: #2a2100;
+  --danger: #b3261e;
+  --ok: #17734a;
+  --tee: #f4f5f7;
+  --photo: #ffffff;
+  --logo-filter: none;
+  --cmyk-c: #19b5e6;
+  --cmyk-m: #e6338f;
+  --cmyk-y: #ffd23f;
+  --cmyk-k: #12161c;
+  --display: "Karantina", "Assistant", "Arial Hebrew", Arial, sans-serif;
+  --body: "Assistant", "Arial Hebrew", "Segoe UI", Arial, sans-serif;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1216;
+    --surface: #191d24;
+    --ink: #eef1f5;
+    --muted: #9ba5b3;
+    --line: #2d343f;
+    --accent: #8ea2ff;
+    --accent-ink: #0a1030;
+    --flag: #ffd23f;
+    --flag-ink: #2a2100;
+    --danger: #ff8a80;
+    --ok: #62d49c;
+    --tee: #232831;
+    --logo-filter: brightness(1.7);
+    --cmyk-k: #eef1f5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1216;
+  --surface: #191d24;
+  --ink: #eef1f5;
+  --muted: #9ba5b3;
+  --line: #2d343f;
+  --accent: #8ea2ff;
+  --accent-ink: #0a1030;
+  --flag: #ffd23f;
+  --flag-ink: #2a2100;
+  --danger: #ff8a80;
+  --ok: #62d49c;
+  --tee: #232831;
+  --logo-filter: brightness(1.7);
+  --cmyk-k: #eef1f5;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  direction: rtl;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+}
+img, svg { max-width: 100%; display: block; }
+button, input, select { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* ---------- header ---------- */
+.demo-bar {
+  background: var(--flag);
+  color: var(--flag-ink);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  text-align: center;
+}
+.masthead { display: flex; flex-direction: column; gap: 14px; }
+.colorbar { display: flex; align-items: center; gap: 4px; }
+.colorbar i { width: 22px; height: 22px; display: block; }
+.colorbar i:nth-child(1) { background: var(--cmyk-c); }
+.colorbar i:nth-child(2) { background: var(--cmyk-m); }
+.colorbar i:nth-child(3) { background: var(--cmyk-y); }
+.colorbar i:nth-child(4) { background: var(--cmyk-k); }
+.reg {
+  width: 22px; height: 22px; margin-inline-start: 8px;
+  border: 1.5px solid var(--ink); border-radius: 50%;
+  position: relative; flex: none;
+}
+.reg::before, .reg::after { content: ""; position: absolute; background: var(--ink); }
+.reg::before { inset-inline: -6px; top: 50%; height: 1.5px; transform: translateY(-50%); }
+.reg::after { inset-block: -6px; left: 50%; width: 1.5px; transform: translateX(-50%); }
+.title-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+.logo { width: clamp(84px, 27vw, 190px); height: auto; filter: var(--logo-filter); }
+h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(3rem, 15.5vw, 6.5rem);
+  overflow-wrap: break-word;
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+.intro { margin: 0; max-width: 34em; color: var(--muted); font-size: 1.05rem; }
+
+/* ---------- sections ---------- */
+section { display: flex; flex-direction: column; gap: 16px; }
+.sec-head { display: flex; align-items: baseline; gap: 10px; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+.sec-n {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700; font-size: 0.85rem;
+  background: var(--ink); color: var(--bg);
+  padding: 1px 7px; border-radius: 3px;
+  direction: ltr;
+}
+h2 { font-family: var(--display); font-weight: 700; font-size: 2.3rem; line-height: 1; margin: 0; letter-spacing: 0.01em; }
+.sec-hint { margin: 0; color: var(--muted); }
+
+/* ---------- prints gallery ---------- */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.print {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.art {
+  position: relative;
+  display: block; width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 0; border: 0;
+  background: var(--tee);
+  cursor: zoom-in;
+  overflow: hidden;
+}
+.art .pic { width: 100%; height: 100%; object-fit: contain; transition: filter 0.2s; }
+.is-blurred .pic { filter: blur(22px) saturate(0.7); transform: scale(1.18); }
+.veil {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  text-align: center; padding: 10px;
+  font-weight: 700; color: var(--ink);
+}
+.veil b { background: var(--flag); color: var(--flag-ink); padding: 2px 10px; border-radius: 3px; }
+.veil span { font-size: 0.85rem; font-weight: 600; background: var(--surface); padding: 1px 8px; border-radius: 3px; }
+.print-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.has-photo { background: var(--photo); }
+.sub { margin: 0; display: flex; justify-content: space-between; gap: 8px; font-weight: 600; color: var(--muted); }
+.sub b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.print h3 { margin: 0; font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+.note { margin: 0; font-size: 0.86rem; line-height: 1.35; color: var(--flag-ink); background: var(--flag); padding: 6px 8px; border-radius: 4px; }
+.print .btn { margin-top: auto; }
+
+/* placeholder tee */
+.ph { width: 100%; height: 100%; }
+.ph .body { fill: var(--surface); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.ph .m0 { fill: var(--cmyk-c); }
+.ph .m1 { fill: var(--cmyk-m); }
+.ph .m2 { fill: var(--accent); }
+.ph text { fill: var(--muted); font-family: var(--body); font-size: 13px; font-weight: 600; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 46px; padding: 8px 16px;
+  border: 2px solid var(--ink); border-radius: 8px;
+  background: transparent; color: var(--ink);
+  font-weight: 700; text-decoration: none; cursor: pointer;
+  text-align: center;
+}
+.btn:hover { background: var(--ink); color: var(--bg); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.btn-small { min-height: 40px; font-size: 0.95rem; padding: 6px 10px; }
+.btn[disabled] { opacity: 0.55; cursor: progress; }
+.btn-block { width: 100%; }
+.linkish { background: none; border: 0; padding: 6px 2px; color: var(--danger); font-weight: 600; cursor: pointer; text-decoration: underline; }
+
+/* ---------- fields ---------- */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.fields { display: grid; gap: 12px; }
+@media (min-width: 560px) { .fields.three { grid-template-columns: 1.2fr 1fr 1.2fr; } }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field > span { font-weight: 600; font-size: 0.92rem; }
+input[type="text"], input[type="tel"], input[type="email"], select {
+  width: 100%; min-height: 46px; padding: 8px 10px;
+  background: var(--bg); border: 1.5px solid var(--line); border-radius: 8px;
+}
+input:focus, select:focus { border-color: var(--accent); }
+.ltr { direction: ltr; text-align: right; }
+.invalid input, .invalid select, select.invalid, input.invalid { border-color: var(--danger); }
+.err { color: var(--danger); font-size: 0.88rem; font-weight: 600; margin: 0; }
+
+/* ---------- order items ---------- */
+.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.item { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: start; }
+.item.flash { animation: flash 0.9s ease-out; }
+@keyframes flash { from { box-shadow: 0 0 0 3px var(--accent); } to { box-shadow: 0 0 0 3px transparent; } }
+.thumb { width: 64px; height: 64px; background: var(--tee); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.thumb .pic { width: 100%; height: 100%; object-fit: contain; }
+.thumb.is-blurred .pic { filter: blur(9px) saturate(0.7); transform: scale(1.25); }
+.item-main { display: grid; gap: 10px; min-width: 0; }
+.item-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.item-n { font-weight: 700; }
+.two { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 480px) { .two { grid-template-columns: 1.6fr 1fr; } }
+.item-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.qty { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 8px; overflow: hidden; direction: ltr; }
+.qty button { width: 44px; height: 44px; border: 0; background: var(--bg); font-size: 1.3rem; font-weight: 700; cursor: pointer; }
+.qty output { min-width: 40px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.price { font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.sumline { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.total { display: flex; align-items: baseline; gap: 8px; }
+.total b { font-family: var(--display); font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+
+/* ---------- payment ---------- */
+.pay { display: flex; flex-direction: column; gap: 14px; }
+.pay-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.pay p { margin: 0; }
+.check { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border: 2px solid var(--ink); border-radius: 8px; cursor: pointer; font-weight: 600; }
+.check input { width: 24px; height: 24px; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
+.check.invalid { border-color: var(--danger); }
+.formerr { background: var(--surface); border: 2px solid var(--danger); color: var(--danger); border-radius: 8px; padding: 10px 12px; font-weight: 600; }
+.closed { border: 2px solid var(--ink); border-radius: var(--radius); padding: 16px; font-weight: 600; background: var(--surface); }
+
+/* ---------- done ---------- */
+.done { border: 2px solid var(--ok); }
+.done h2 { color: var(--ok); }
+.done ul { margin: 0; padding-inline-start: 20px; }
+.done .stack { display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- viewer ---------- */
+.viewer {
+  position: fixed; inset: 0; z-index: 20;
+  background: rgba(8, 10, 14, 0.88);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.viewer-box {
+  background: var(--surface); color: var(--ink);
+  border-radius: var(--radius);
+  width: min(560px, 100%); max-height: 100%;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.viewer-art { background: var(--tee); flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+.viewer-art figure { margin: 0; position: relative; background: var(--photo); }
+.viewer-art figure .pic { width: 100%; height: auto; }
+.viewer-art figcaption { position: absolute; top: 8px; inset-inline-start: 8px; background: var(--ink); color: var(--bg); font-size: 0.8rem; font-weight: 700; padding: 1px 8px; border-radius: 3px; }
+.viewer-art > .pic { aspect-ratio: 1 / 1; }
+.viewer-foot { flex: none; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.viewer-foot strong { font-size: 1.1rem; }
+
+.loading { color: var(--muted); padding: 24px 0; }
+footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--line); padding-top: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body dir="rtl">
+<div class="demo-bar" id="demoBar" hidden>האתר עדיין בהקמה ואי אפשר לשלוח הזמנות. אל תשלמו בינתיים.</div>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="colorbar" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="reg"></span></div>
+    <div class="title-row">
+      <h1 id="siteTitle">הזמנת חולצות צוותיות</h1>
+      <img class="logo" id="logo" alt="לוגו המסייעת" width="380" height="327" hidden>
+    </div>
+    <p class="intro" id="siteIntro">בוחרים פרינט, סוג חולצה ומידה, משלמים בפייבוקס ושולחים. אפשר להזמין כמה חולצות בהזמנה אחת.</p>
+  </header>
+
+    <div class="closed" id="closed" hidden></div>
+
+  <section id="secPrints" aria-labelledby="hPrints" hidden>
+    <div class="sec-head"><span class="sec-n">01</span><h2 id="hPrints">הפרינטים</h2></div>
+    <p class="sec-hint">לחיצה על תמונה פותחת אותה בגדול.</p>
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <form id="orderForm" novalidate hidden>
+    <div class="wrap" style="padding:0">
+      <section aria-labelledby="hItems">
+        <div class="sec-head"><span class="sec-n">02</span><h2 id="hItems">ההזמנה שלכם</h2></div>
+        <p class="sec-hint">לכל חולצה בוחרים פרינט, סוג חולצה ומידה.</p>
+        <ul class="items" id="items"></ul>
+        <div class="sumline">
+          <button type="button" class="btn" id="addItem">+ הוספת חולצה</button>
+          <div class="total"><span id="countLabel">חולצה אחת</span><b id="sumTotal" dir="ltr">₪0</b></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="hWho">
+        <div class="sec-head"><span class="sec-n">03</span><h2 id="hWho">פרטי המזמין</h2></div>
+        <div class="card fields three">
+          <label class="field" id="fName"><span>שם מלא</span>
+            <input type="text" id="fullName" name="name" autocomplete="name" maxlength="80">
+          </label>
+          <label class="field" id="fPhone"><span>טלפון</span>
+            <input type="tel" id="phone" name="phone" class="ltr" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="050-0000000">
+          </label>
+          <label class="field" id="fEmail"><span>מייל</span>
+            <input type="email" id="email" name="email" class="ltr" autocomplete="email" inputmode="email" maxlength="120" placeholder="name@example.com">
+          </label>
+        </div>
+      </section>
+
+      <section aria-labelledby="hPay">
+        <div class="sec-head"><span class="sec-n">04</span><h2 id="hPay">תשלום ושליחה</h2></div>
+        <div class="card pay">
+          <div class="pay-row">
+            <p>משלמים בפייבוקס, ואז חוזרים לכאן לאשר ולשלוח.</p>
+            <div class="total"><span>לתשלום</span><b id="payTotal" dir="ltr">₪0</b></div>
+          </div>
+          <a class="btn btn-block" id="payLink" href="https://links.payboxapp.com/oFRZxusD67b" target="_blank" rel="noopener">מעבר לתשלום בפייבוקס ↗</a>
+          <label class="check" id="paidWrap">
+            <input type="checkbox" id="paid" name="paid">
+            <span id="paidLabel">אני מאשר/ת שביצעתי את התשלום בפייבוקס</span>
+          </label>
+          <div class="formerr" id="formErr" role="alert" hidden></div>
+          <button type="submit" class="btn btn-primary btn-block" id="submitBtn">שליחת ההזמנה</button>
+        </div>
+      </section>
+    </div>
+  </form>
+
+  <section class="card done" id="done" aria-live="polite" hidden>
+    <div class="stack">
+      <h2>ההזמנה נקלטה</h2>
+      <p id="doneText" style="margin:0"></p>
+      <ul id="doneList"></ul>
+      <p style="margin:0"><strong id="doneTotal"></strong></p>
+      <button type="button" class="btn" id="again">הזמנה נוספת</button>
+    </div>
+  </section>
+
+  <footer id="foot">שאלות על ההזמנה? פנו למי ששלח לכם את הקישור.</footer>
+</div>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="viewerName" hidden>
+  <div class="viewer-box">
+    <div class="viewer-art" id="viewerArt"></div>
+    <div class="viewer-foot">
+      <strong id="viewerName"></strong>
+      <button type="button" class="btn btn-small" id="viewerClose">סגירה</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* Address of the Google Apps Script web app that writes orders to the sheet (set in config.js) */
+  var API = String(window.SHIRTS_API_URL || '').trim();
+  var LIVE = /^https:\/\/script\.google\.com\//.test(API);
+  var IMMODEST_NOTE = 'שימו לב: הפרינט הזה אינו צנוע ולכן מוצג מטושטש. לחיצה על התמונה תציג אותו בתצוגה מקדימה.';
+  var SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+  var IMAGES = {
+    "logo-mesayaat": 'img/logo-mesayaat.png',
+    "mesayaat-oversize-back": 'img/mesayaat-oversize-back.jpg',
+    "mesayaat-oversize-front": 'img/mesayaat-oversize-front.jpg',
+    "mesayaat-tee-back": 'img/mesayaat-tee-back.jpg',
+    "mesayaat-tee-front": 'img/mesayaat-tee-front.jpg',
+    "shalhi-oversize-back": 'img/shalhi-oversize-back.jpg',
+    "shalhi-tee-back": 'img/shalhi-tee-back.jpg'
+  };
+  /* Shown immediately; replaced by the sheet's own settings once they load */
+  var DEFAULTS = {
+    title: 'הזמנת חולצות צוותיות',
+    intro: 'בוחרים פרינט, סוג חולצה ומידה, משלמים בפייבוקס ושולחים. אפשר להזמין כמה חולצות בהזמנה אחת.',
+    payboxUrl: 'https://links.payboxapp.com/oFRZxusD67b',
+    open: true,
+    closedText: 'ההזמנות נסגרו. תודה לכל מי שהזמין.',
+    prints: [
+      { name: 'לוגו מסייעת', image: '', blurred: false, note: '', variants: [
+        { shirt: 'אוברסייז', images: ['mesayaat-oversize-front', 'mesayaat-oversize-back'] },
+        { shirt: 'טי רגילה', images: ['mesayaat-tee-front', 'mesayaat-tee-back'] }
+      ] },
+      { name: 'שלחי ניוד', image: '', blurred: true, note: IMMODEST_NOTE, cover: 'back', variants: [
+        { shirt: 'אוברסייז', images: ['mesayaat-oversize-front', 'shalhi-oversize-back'] },
+        { shirt: 'טי רגילה', images: ['mesayaat-tee-front', 'shalhi-tee-back'] }
+      ] }
+    ],
+    shirts: [
+      { name: 'אוברסייז', price: 60, sizes: SIZES },
+      { name: 'טי רגילה', price: 40, sizes: SIZES }
+    ]
+  };
+
+  if (IMAGES['logo-mesayaat']) { $('logo').src = IMAGES['logo-mesayaat']; $('logo').hidden = false; }
+
+  var cfg = null;
+  var seq = 0;
+  var state = { items: [], name: '', phone: '', email: '' };
+  var lastFocus = null;
+  var submitId = newId();
+  function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+
+  function $(id) { return document.getElementById(id); }
+  function h(tag, props, kids) {
+    var n = document.createElement(tag), k;
+    if (props) for (k in props) {
+      if (k === 'class') n.className = props[k];
+      else if (k === 'text') n.textContent = props[k];
+      else if (k.slice(0, 2) === 'on') n.addEventListener(k.slice(2), props[k]);
+      else if (props[k] !== false && props[k] != null) n.setAttribute(k, props[k] === true ? '' : props[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function money(n) { return '₪' + (Number(n) || 0).toLocaleString('he-IL'); }
+  function printIndex(name) { for (var i = 0; i < cfg.prints.length; i++) if (cfg.prints[i].name === name) return i; return -1; }
+  function shirtBy(name) { for (var i = 0; i < cfg.shirts.length; i++) if (cfg.shirts[i].name === name) return cfg.shirts[i]; return null; }
+
+  /* ---------- print artwork ---------- */
+  function placeholder(i) {
+    var motifs = [
+      '<circle class="m0" cx="100" cy="104" r="26"/>',
+      '<path class="m1" d="M100 76 L128 128 L72 128 Z"/>',
+      '<path class="m2" d="M100 74 L130 104 L100 134 L70 104 Z"/>'
+    ];
+    var box = document.createElement('div');
+    box.className = 'pic';
+    box.innerHTML = '<svg class="ph" viewBox="0 0 200 200" role="img" aria-label="אין תמונה">' +
+      '<path class="body" d="M72 30 L42 42 L16 76 L40 96 L54 84 L54 172 L146 172 L146 84 L160 96 L184 76 L158 42 L128 30 C122 46 78 46 72 30 Z"/>' +
+      (i < 0 ? '' : motifs[i % motifs.length]) +
+      '</svg>';
+    return box;
+  }
+  function imagesFor(p, shirtName) {
+    if (!p) return [];
+    var vs = p.variants || [], i;
+    for (i = 0; i < vs.length; i++) if (vs[i].shirt === shirtName && vs[i].images.length) return vs[i].images;
+    if (p.image) return [p.image];
+    for (i = 0; i < vs.length; i++) if (vs[i].images.length) return vs[i].images;
+    return [];
+  }
+  /* ordered views of a print: the side that carries the print comes first */
+  function viewsOf(p, images) {
+    var sides = ['מלפנים', 'מאחור'];
+    var list = images.map(function (src, n) { return { src: src, side: images.length > 1 ? (sides[n] || '') : '' }; });
+    if (p && p.cover === 'back' && list.length > 1) list.unshift(list.splice(1, 1)[0]);
+    return list;
+  }
+  function pic(source, alt, phIndex) {
+    if (!source) return placeholder(phIndex);
+    var img = h('img', { class: 'pic', src: IMAGES[source] || source, alt: alt, loading: 'lazy' });
+    img.addEventListener('error', function () {
+      var m = /drive\.google\.com\/thumbnail\?id=([\w-]+)/.exec(img.src);
+      if (m) { img.src = 'https://lh3.googleusercontent.com/d/' + m[1] + '=w1200'; return; }
+      if (img.parentNode) img.parentNode.replaceChild(placeholder(phIndex), img);
+    });
+    return img;
+  }
+
+  /* ---------- gallery ---------- */
+  function cards() {
+    var out = [];
+    cfg.prints.forEach(function (p, i) {
+      var vs = (p.variants || []).filter(function (v) { return v.images.length && shirtBy(v.shirt); });
+      if (!vs.length) out.push({ p: p, i: i, shirt: '', views: viewsOf(p, p.image ? [p.image] : []) });
+      vs.forEach(function (v) { out.push({ p: p, i: i, shirt: v.shirt, views: viewsOf(p, v.images) }); });
+    });
+    return out;
+  }
+  function renderGallery() {
+    var g = $('gallery');
+    g.innerHTML = '';
+    cards().forEach(function (c) {
+      var p = c.p, shirt = shirtBy(c.shirt);
+      var label = p.name + (c.shirt ? ', ' + c.shirt : '');
+      var open = h('button', {
+        type: 'button', class: 'art' + (p.blurred ? ' is-blurred' : '') + (c.views.length ? ' has-photo' : ''),
+        'aria-label': 'תצוגה מקדימה של ' + label,
+        onclick: function (e) { openViewer(c, e.currentTarget); }
+      }, [pic(c.views[0] && c.views[0].src, p.blurred ? 'פרינט מטושטש' : label, c.i),
+          p.blurred ? h('span', { class: 'veil' }, [h('b', { text: 'מטושטש' }), h('span', { text: 'לחצו לתצוגה מקדימה' })]) : null]);
+      g.appendChild(h('article', { class: 'print' }, [
+        open,
+        h('div', { class: 'print-body' }, [
+          h('h3', { text: p.name }),
+          shirt ? h('p', { class: 'sub' }, [h('span', { text: shirt.name }), shirt.price ? h('b', { dir: 'ltr', text: money(shirt.price) }) : null]) : null,
+          p.blurred ? h('p', { class: 'note', text: p.note || IMMODEST_NOTE }) : (p.note ? h('p', { class: 'sec-hint', style: 'font-size:.88rem', text: p.note }) : null),
+          h('button', { type: 'button', class: 'btn btn-small', text: 'הוספה להזמנה', onclick: function () { addItem(p.name, c.shirt, true); } })
+        ])
+      ]));
+    });
+  }
+
+  /* ---------- viewer ---------- */
+  function openViewer(c, from) {
+    lastFocus = from || null;
+    var box = $('viewerArt');
+    var label = c.p.name + (c.shirt ? ' · ' + c.shirt : '');
+    box.innerHTML = '';
+    box.scrollTop = 0;
+    if (!c.views.length) box.appendChild(placeholder(c.i));
+    c.views.forEach(function (v) {
+      box.appendChild(h('figure', null, [
+        pic(v.src, label + (v.side ? ', ' + v.side : ''), c.i),
+        v.side ? h('figcaption', { text: v.side }) : null
+      ]));
+    });
+    $('viewerName').textContent = label;
+    $('viewer').hidden = false;
+    $('viewerClose').focus();
+  }
+  function closeViewer() {
+    if ($('viewer').hidden) return;
+    $('viewer').hidden = true;
+    $('viewerArt').innerHTML = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  /* ---------- items ---------- */
+  function newItem(print) { return { id: ++seq, print: print || '', shirt: '', size: '', qty: 1 }; }
+  function addItem(print, shirtName, scroll) {
+    var blank = null;
+    if (print) state.items.forEach(function (it) { if (!blank && !it.print && !it.shirt) blank = it; });
+    var it = blank || newItem(print);
+    it.print = print || it.print;
+    if (shirtName && shirtBy(shirtName)) { it.shirt = shirtName; it.size = ''; }
+    if (!blank) state.items.push(it);
+    renderItems();
+    updateTotals();
+    var node = $('item-' + it.id);
+    if (node && scroll) {
+      node.classList.add('flash');
+      node.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }
+  function select(id, label, value, options, placeholderText, disabled, onchange) {
+    var s = h('select', { id: id, disabled: disabled, onchange: function () { onchange(s.value); } },
+      [h('option', { value: '', text: placeholderText })].concat(options.map(function (o) {
+        return h('option', { value: o.value, text: o.label });
+      })));
+    s.value = value || '';
+    return h('label', { class: 'field' }, [h('span', { text: label }), s]);
+  }
+  function itemNode(it, idx) {
+    var pi = printIndex(it.print);
+    var shirt = shirtBy(it.shirt);
+    var blurred = pi >= 0 && cfg.prints[pi].blurred;
+    var thumbView = viewsOf(cfg.prints[pi], imagesFor(cfg.prints[pi], it.shirt))[0];
+    var thumbSrc = thumbView && thumbView.src;
+    function refresh(focusId) {
+      var old = $('item-' + it.id);
+      var fresh = itemNode(it, state.items.indexOf(it));
+      old.parentNode.replaceChild(fresh, old);
+      updateTotals();
+      var f = focusId && $(focusId);
+      if (f) f.focus();
+    }
+    var qtyOut = h('output', { text: String(it.qty), 'aria-live': 'polite' });
+    return h('li', { class: 'card item', id: 'item-' + it.id }, [
+      h('div', { class: 'thumb' + (blurred ? ' is-blurred' : '') + (thumbSrc ? ' has-photo' : '') }, [pic(thumbSrc, '', pi)]),
+      h('div', { class: 'item-main' }, [
+        h('div', { class: 'item-head' }, [
+          h('span', { class: 'item-n', text: 'חולצה ' + (idx + 1) }),
+          state.items.length > 1 ? h('button', {
+            type: 'button', class: 'linkish', text: 'הסרה', 'aria-label': 'הסרת חולצה ' + (idx + 1),
+            onclick: function () {
+              state.items = state.items.filter(function (x) { return x !== it; });
+              renderItems(); updateTotals();
+            }
+          }) : null
+        ]),
+        select('print-' + it.id, 'פרינט', it.print,
+          cfg.prints.map(function (p) { return { value: p.name, label: p.name }; }),
+          'בחרו פרינט', false,
+          function (v) { it.print = v; refresh('print-' + it.id); }),
+        h('div', { class: 'two' }, [
+          select('shirt-' + it.id, 'סוג חולצה', it.shirt,
+            cfg.shirts.map(function (s) { return { value: s.name, label: s.name + (s.price ? ' · ' + money(s.price) : '') }; }),
+            'בחרו סוג', false,
+            function (v) {
+              it.shirt = v;
+              var s = shirtBy(v);
+              if (!s || s.sizes.indexOf(it.size) < 0) it.size = '';
+              refresh('shirt-' + it.id);
+            }),
+          select('size-' + it.id, 'מידה', it.size,
+            (shirt ? shirt.sizes : []).map(function (z) { return { value: z, label: z }; }),
+            shirt ? 'בחרו מידה' : 'קודם סוג חולצה', !shirt,
+            function (v) { it.size = v; clearInvalid($('item-' + it.id)); })
+        ]),
+        h('div', { class: 'item-foot' }, [
+          h('div', { class: 'qty', role: 'group', 'aria-label': 'כמות' }, [
+            h('button', { type: 'button', text: '−', 'aria-label': 'פחות', onclick: function () { step(-1); } }),
+            qtyOut,
+            h('button', { type: 'button', text: '+', 'aria-label': 'עוד', onclick: function () { step(1); } })
+          ]),
+          h('span', { class: 'price', id: 'line-' + it.id, dir: 'ltr', text: shirt ? money(shirt.price * it.qty) : '' })
+        ]),
+        h('p', { class: 'err', id: 'err-' + it.id, hidden: true })
+      ])
+    ]);
+    function step(d) {
+      it.qty = Math.max(1, Math.min(20, it.qty + d));
+      qtyOut.textContent = String(it.qty);
+      var s = shirtBy(it.shirt);
+      $('line-' + it.id).textContent = s ? money(s.price * it.qty) : '';
+      updateTotals();
+    }
+  }
+  function renderItems() {
+    var list = $('items');
+    list.innerHTML = '';
+    state.items.forEach(function (it, i) { list.appendChild(itemNode(it, i)); });
+  }
+  function totals() {
+    var count = 0, sum = 0;
+    state.items.forEach(function (it) {
+      var s = shirtBy(it.shirt);
+      count += it.qty;
+      if (s) sum += s.price * it.qty;
+    });
+    return { count: count, sum: sum };
+  }
+  function updateTotals() {
+    var t = totals();
+    $('countLabel').textContent = t.count === 1 ? 'חולצה אחת' : t.count + ' חולצות';
+    $('sumTotal').textContent = money(t.sum);
+    $('payTotal').textContent = money(t.sum);
+    $('paidLabel').textContent = 'אני מאשר/ת שביצעתי את התשלום בפייבוקס' + (t.sum ? ' על סך ' + money(t.sum) : '');
+  }
+
+  /* ---------- validation and submit ---------- */
+  function clearInvalid(node) {
+    if (!node) return;
+    node.classList.remove('invalid');
+    var e = node.querySelector('.err');
+    if (e) { e.hidden = true; e.textContent = ''; }
+    Array.prototype.forEach.call(node.querySelectorAll('.invalid'), function (x) { x.classList.remove('invalid'); });
+  }
+  function fieldError(wrapId, msg) {
+    var w = $(wrapId);
+    var e = w.querySelector('.err');
+    if (!e) { e = h('p', { class: 'err' }); w.appendChild(e); }
+    w.classList.toggle('invalid', !!msg);
+    e.textContent = msg || '';
+    e.hidden = !msg;
+  }
+  function cleanPhone(v) { return String(v || '').replace(/[^\d+]/g, ''); }
+  function validate() {
+    var first = null, problems = 0;
+    function bad(node) { problems++; if (!first) first = node; }
+
+    state.items.forEach(function (it, i) {
+      var node = $('item-' + it.id), missing = [];
+      clearInvalid(node);
+      if (!it.print) { missing.push('פרינט'); $('print-' + it.id).classList.add('invalid'); }
+      if (!it.shirt) { missing.push('סוג חולצה'); $('shirt-' + it.id).classList.add('invalid'); }
+      if (!it.size) { missing.push('מידה'); $('size-' + it.id).classList.add('invalid'); }
+      if (missing.length) {
+        var e = $('err-' + it.id);
+        e.textContent = 'בחולצה ' + (i + 1) + ' חסר: ' + missing.join(', ') + '.';
+        e.hidden = false;
+        bad(node);
+      }
+    });
+
+    var name = $('fullName').value.trim();
+    var phone = cleanPhone($('phone').value);
+    var email = $('email').value.trim();
+    var nameOk = name.length >= 2;
+    var phoneOk = /^0\d{8,9}$/.test(phone) || /^\+?972\d{8,9}$/.test(phone);
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    fieldError('fName', nameOk ? '' : 'כתבו שם מלא.');
+    fieldError('fPhone', phoneOk ? '' : 'כתבו מספר טלפון תקין, למשל 050-1234567.');
+    fieldError('fEmail', emailOk ? '' : 'כתבו כתובת מייל תקינה.');
+    if (!nameOk) bad($('fullName'));
+    if (!phoneOk) bad($('phone'));
+    if (!emailOk) bad($('email'));
+
+    var paid = $('paid').checked;
+    $('paidWrap').classList.toggle('invalid', !paid);
+    if (!paid) bad($('paid'));
+
+    var msg = '';
+    if (problems) {
+      msg = (!paid && problems === 1)
+        ? 'לפני השליחה צריך לשלם בפייבוקס ולסמן את אישור התשלום.'
+        : 'יש ' + (problems === 1 ? 'פרט אחד' : problems + ' פרטים') + ' להשלים לפני השליחה. הם מסומנים באדום.';
+    }
+    showFormError(msg);
+    if (first) {
+      first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      var f = first.matches && first.matches('input') ? first : first.querySelector && first.querySelector('select.invalid');
+      if (f) f.focus({ preventScroll: true });
+    }
+    return problems ? null : {
+      name: name, phone: phone, email: email, paid: true,
+      items: state.items.map(function (it) { return { print: it.print, shirt: it.shirt, size: it.size, qty: it.qty }; })
+    };
+  }
+  function showFormError(msg) {
+    $('formErr').textContent = msg || '';
+    $('formErr').hidden = !msg;
+  }
+  function send(order) {
+    order.submitId = submitId;   // lets the sheet ignore a repeated send of the same order
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(order)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('שגיאת שרת ' + r.status);
+      return r.json();
+    }).then(function (res) {
+      if (!res || !res.ok) throw new Error((res && res.error) || 'תשובה לא צפויה מהשרת');
+      return res;
+    });
+  }
+  function onSubmit(e) {
+    e.preventDefault();
+    if (!LIVE) {
+      showFormError('האתר עוד לא מחובר לטבלת ההזמנות, ולכן אי אפשר לשלוח הזמנות כרגע.');
+      return;
+    }
+    var order = validate();
+    if (!order) return;
+    var btn = $('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'שולח…';
+    send(order).then(function (res) {
+      showDone(order, res);
+    }, function (err) {
+      var m = err && err.message && !(err instanceof TypeError) ? String(err.message).replace(/^Error:\s*/, '') : '';
+      showFormError('ההזמנה לא נשלחה' + (m ? ': ' + m + '.' : '.') + ' בדקו את החיבור ונסו שוב.');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = 'שליחת ההזמנה';
+    });
+  }
+  function showDone(order, res) {
+    $('doneText').textContent = 'תודה, ' + order.name + '. מספר ההזמנה שלכם: ' + (res.orderId || '') + '.';
+    var ul = $('doneList');
+    ul.innerHTML = '';
+    order.items.forEach(function (it) {
+      ul.appendChild(h('li', { text: it.qty + ' × ' + it.print + ', ' + it.shirt + ', מידה ' + it.size }));
+    });
+    $('doneTotal').textContent = 'סה״כ: ' + money(res.total != null ? res.total : totals().sum);
+    $('secPrints').hidden = true;
+    $('orderForm').hidden = true;
+    $('done').hidden = false;
+    $('done').scrollIntoView({ block: 'start' });
+  }
+  function reset() {
+    submitId = newId();
+    state.items = [newItem('')];
+    $('paid').checked = false;
+    showFormError('');
+    renderItems();
+    updateTotals();
+    $('done').hidden = true;
+    $('secPrints').hidden = false;
+    $('orderForm').hidden = false;
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- boot ---------- */
+  function snapshot() {
+    return {
+      items: state.items.map(function (it) { return { print: it.print, shirt: it.shirt, size: it.size, qty: it.qty }; }),
+      name: $('fullName').value, phone: $('phone').value, email: $('email').value
+    };
+  }
+  function signature(c) {
+    return JSON.stringify([c.title, c.intro, c.payboxUrl, !!c.open, c.open ? '' : c.closedText,
+      c.prints.map(function (p) {
+        return [p.name, p.image || '', !!p.blurred, p.note || '', p.cover || 'front',
+          (p.variants || []).map(function (v) { return [v.shirt, v.images]; })];
+      }),
+      c.shirts.map(function (s) { return [s.name, s.price, s.sizes]; })]);
+  }
+  function applyConfig(c, saved) {
+    cfg = c;
+    var done = !$('done').hidden;
+    if (cfg.title) { $('siteTitle').textContent = cfg.title; document.title = cfg.title; }
+    if (cfg.intro) $('siteIntro').textContent = cfg.intro;
+    if (cfg.payboxUrl) $('payLink').href = cfg.payboxUrl;
+    var ready = cfg.open && cfg.prints.length && cfg.shirts.length;
+    $('closed').textContent = ready ? '' : (cfg.open ? 'האתר עוד לא מוכן להזמנות. נסו שוב מאוחר יותר.' : (cfg.closedText || 'ההזמנות סגורות כרגע.'));
+    $('closed').hidden = !!ready || done;
+    if (!ready) {
+      $('secPrints').hidden = true;
+      $('orderForm').hidden = true;
+      return;
+    }
+    state.items = (saved.items || []).filter(function (it) { return it && typeof it === 'object'; }).map(function (it) {
+      var n = newItem(printIndex(it.print) >= 0 ? it.print : '');
+      var s = shirtBy(it.shirt);
+      if (s) { n.shirt = s.name; if (s.sizes.indexOf(it.size) >= 0) n.size = it.size; }
+      n.qty = Math.max(1, Math.min(20, parseInt(it.qty, 10) || 1));
+      return n;
+    });
+    if (!state.items.length) state.items = [newItem('')];
+    $('fullName').value = saved.name || '';
+    $('phone').value = saved.phone || '';
+    $('email').value = saved.email || '';
+    renderGallery();
+    renderItems();
+    updateTotals();
+    $('secPrints').hidden = done;
+    $('orderForm').hidden = done;
+  }
+  function start() {
+    $('demoBar').hidden = LIVE;
+    applyConfig(DEFAULTS, {});
+    if (!LIVE) return;
+    // Prices, prints and the open/closed switch are managed in the sheet; pick up any change.
+    fetch(API + '?action=config').then(function (r) { return r.json(); }).then(function (c) {
+      if (c && c.ok && Array.isArray(c.prints) && Array.isArray(c.shirts) && signature(c) !== signature(cfg)) {
+        applyConfig(c, snapshot());
+      }
+    }).catch(function () { /* the built-in settings stay in place */ });
+  }
+
+  $('addItem').addEventListener('click', function () { addItem('', '', false); var last = state.items[state.items.length - 1]; var s = $('print-' + last.id); if (s) s.focus(); });
+  $('orderForm').addEventListener('submit', onSubmit);
+  $('again').addEventListener('click', reset);
+  $('paid').addEventListener('change', function () { $('paidWrap').classList.remove('invalid'); if ($('paid').checked) showFormError(''); });
+  ['fName', 'fPhone', 'fEmail'].forEach(function (id) {
+    $(id).querySelector('input').addEventListener('input', function () { fieldError(id, ''); });
+  });
+  $('viewerClose').addEventListener('click', closeViewer);
+  $('viewer').addEventListener('click', function (e) { if (e.target === $('viewer')) closeViewer(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeViewer(); });
+
+  start();
+})();
+</script>
+</body>
+</html>
