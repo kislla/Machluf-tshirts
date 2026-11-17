@@ -201,10 +201,11 @@ function ensureTabs_(ss) {
   });
 
   tab_(ss, TABS.summary, [], [], function (sh) {
+    // מספרים נכפים כמספר (*1) כדי ש-QUERY לא יזהה את העמודה כטקסט כשאין עדיין הזמנות
     sh.getRange('A1').setFormula(
-      `=QUERY('${TABS.orders}'!A:L,"select F,G,H,sum(I) where I is not null group by F,G,H label F 'פרינט', G 'סוג חולצה', H 'מידה', sum(I) 'כמות'",1)`);
+      `=IFERROR(QUERY({'${TABS.orders}'!F2:H, ARRAYFORMULA('${TABS.orders}'!I2:I*1)}, "select Col1, Col2, Col3, sum(Col4) where Col1 <> '' group by Col1, Col2, Col3 label Col1 'פרינט', Col2 'סוג חולצה', Col3 'מידה', sum(Col4) 'כמות'", 0), "אין הזמנות עדיין")`);
     sh.getRange('F1').setFormula(
-      `=QUERY('${TABS.orders}'!A:L,"select B,C,D,sum(K) where I is not null group by B,C,D label B 'מספר הזמנה', C 'שם מלא', D 'טלפון', sum(K) 'לתשלום'",1)`);
+      `=IFERROR(QUERY({'${TABS.orders}'!B2:D, ARRAYFORMULA('${TABS.orders}'!K2:K*1)}, "select Col1, Col2, Col3, sum(Col4) where Col2 <> '' group by Col1, Col2, Col3 label Col1 'מספר הזמנה', Col2 'שם מלא', Col3 'טלפון', sum(Col4) 'לתשלום'", 0), "")`);
   });
 
   tab_(ss, TABS.prints, ['שם הפרינט', 'קישור לתמונה', 'מטושטש', 'הערה', 'פעיל', 'תמונה ראשית'], [
