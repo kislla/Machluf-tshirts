@@ -393,6 +393,8 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
   /* Address of the Google Apps Script web app that writes orders to the sheet (set in config.js) */
   var API = String(window.SHIRTS_API_URL || '').trim();
   var LIVE = /^https:\/\/script\.google\.com\//.test(API);
+  var apiState = LIVE ? 'checking' : 'off';   // checking | ok | down | off
+  var DOWN_TEXT = 'אי אפשר לשלוח הזמנות כרגע, כי האתר לא מצליח להתחבר לטבלת ההזמנות. אל תשלמו עד שזה יסתדר. נסו לרענן בעוד כמה דקות.';
   var IMMODEST_NOTE = 'שימו לב: הפרינט הזה אינו צנוע ולכן מוצג מטושטש. לחיצה על התמונה תציג אותו בתצוגה מקדימה.';
   var SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
   var IMAGES = {
@@ -758,6 +760,10 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
       showFormError('האתר עוד לא מחובר לטבלת ההזמנות, ולכן אי אפשר לשלוח הזמנות כרגע.');
       return;
     }
+    if (apiState === 'down') {
+      showFormError(DOWN_TEXT);
+      return;
+    }
     var order = validate();
     if (!order) return;
     var btn = $('submitBtn');
@@ -850,11 +856,17 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
     applyConfig(DEFAULTS, {});
     if (!LIVE) return;
     // Prices, prints and the open/closed switch are managed in the sheet; pick up any change.
+    // If the sheet can't be reached, say so before anyone pays.
     fetch(API + '?action=config').then(function (r) { return r.json(); }).then(function (c) {
-      if (c && c.ok && Array.isArray(c.prints) && Array.isArray(c.shirts) && signature(c) !== signature(cfg)) {
-        applyConfig(c, snapshot());
-      }
-    }).catch(function () { /* the built-in settings stay in place */ });
+      if (!(c && c.ok && Array.isArray(c.prints) && Array.isArray(c.shirts))) throw new Error((c && c.error) || 'bad config');
+      apiState = 'ok';
+      if (signature(c) !== signature(cfg)) applyConfig(c, snapshot());
+    }).catch(function (err) {
+      apiState = 'down';
+      $('demoBar').textContent = DOWN_TEXT;
+      $('demoBar').hidden = false;
+      if (window.console) console.warn('shirts: order sheet unavailable', err);
+    });
   }
 
   $('addItem').addEventListener('click', function () { addItem('', '', false); var last = state.items[state.items.length - 1]; var s = $('print-' + last.id); if (s) s.focus(); });
