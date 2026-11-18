@@ -241,8 +241,8 @@ function ensureTabs_(ss) {
   });
 
   tab_(ss, TABS.shirts, ['סוג חולצה', 'מחיר', 'מידות', 'פעיל'], [
-    ['אוברסייז', 60, SAMPLE_SIZES, 'כן'],
-    ['טי רגילה', 40, SAMPLE_SIZES, 'כן']
+    ['אוברסייז', 70, SAMPLE_SIZES, 'כן'],
+    ['טי רגילה', 50, SAMPLE_SIZES, 'כן']
   ]);
 
   tab_(ss, TABS.settings, ['הגדרה', 'ערך'], [
