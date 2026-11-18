@@ -220,7 +220,8 @@ function ensureTabs_(ss) {
 
   tab_(ss, TABS.prints, ['שם הפרינט', 'קישור לתמונה', 'מטושטש', 'הערה', 'פעיל', 'תמונה ראשית'], [
     ['לוגו מסייעת', '', 'לא', '', 'כן', 'מלפנים'],
-    ['שלחי ניוד', '', 'כן', IMMODEST_NOTE, 'כן', 'מאחור']
+    ['שלחי ניוד', '', 'כן', IMMODEST_NOTE, 'כן', 'מאחור'],
+    ['777 בום', '', 'לא', '', 'כן', 'מאחור']
   ], function (sh) {
     sh.getRange('F1').setNote('מלפנים או מאחור: איזה צד של החולצה מוצג בכרטיס ובתמונה הקטנה.');
     sh.getRange('B1').setNote('תמונה כללית לפרינט. לא חובה אם יש תמונות בלשונית "תמונות".');
@@ -231,7 +232,9 @@ function ensureTabs_(ss) {
     ['לוגו מסייעת', 'אוברסייז', 'mesayaat-oversize-front', 'mesayaat-oversize-back', ''],
     ['לוגו מסייעת', 'טי רגילה', 'mesayaat-tee-front', 'mesayaat-tee-back', ''],
     ['שלחי ניוד', 'אוברסייז', 'mesayaat-oversize-front', 'shalhi-oversize-back', 100],
-    ['שלחי ניוד', 'טי רגילה', 'mesayaat-tee-front', 'shalhi-tee-back', 60]
+    ['שלחי ניוד', 'טי רגילה', 'mesayaat-tee-front', 'shalhi-tee-back', 60],
+    ['777 בום', 'אוברסייז', 'mesayaat-oversize-front', 'boom-oversize-back', 100],
+    ['777 בום', 'טי רגילה', 'mesayaat-tee-front', 'boom-tee-back', 60]
   ], function (sh) {
     sh.getRange('E1').setNote('מחיר לצירוף הזה של פרינט וסוג חולצה. ריק = המחיר מלשונית "חולצות".');
     sh.getRange('C1').setNote('שם של תמונה שנמצאת בתיקיית img באתר (בלי הסיומת), קישור שיתוף מגוגל דרייב עם גישה לכל מי שיש לו את הקישור, או כתובת תמונה.');
