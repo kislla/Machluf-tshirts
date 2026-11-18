@@ -419,8 +419,8 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
         { shirt: 'טי רגילה', images: ['mesayaat-tee-front', 'mesayaat-tee-back'] }
       ] },
       { name: 'שלחי ניוד', image: '', blurred: true, note: IMMODEST_NOTE, cover: 'back', variants: [
-        { shirt: 'אוברסייז', images: ['mesayaat-oversize-front', 'shalhi-oversize-back'] },
-        { shirt: 'טי רגילה', images: ['mesayaat-tee-front', 'shalhi-tee-back'] }
+        { shirt: 'אוברסייז', images: ['mesayaat-oversize-front', 'shalhi-oversize-back'], price: 100 },
+        { shirt: 'טי רגילה', images: ['mesayaat-tee-front', 'shalhi-tee-back'], price: 60 }
       ] }
     ],
     shirts: [
@@ -452,6 +452,14 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
   }
   function money(n) { return '₪' + (Number(n) || 0).toLocaleString('he-IL'); }
   function printIndex(name) { for (var i = 0; i < cfg.prints.length; i++) if (cfg.prints[i].name === name) return i; return -1; }
+  /* Price of a print on a shirt type: the combination's own price if the sheet sets one, else the shirt type's price */
+  function priceOf(printName, shirtName) {
+    var s = shirtBy(shirtName);
+    if (!s) return 0;
+    var pi = printIndex(printName), vs = pi >= 0 ? (cfg.prints[pi].variants || []) : [];
+    for (var i = 0; i < vs.length; i++) if (vs[i].shirt === s.name && vs[i].price > 0) return vs[i].price;
+    return s.price;
+  }
   function shirtBy(name) { for (var i = 0; i < cfg.shirts.length; i++) if (cfg.shirts[i].name === name) return cfg.shirts[i]; return null; }
 
   /* ---------- print artwork ---------- */
@@ -521,7 +529,7 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
         open,
         h('div', { class: 'print-body' }, [
           h('h3', { text: p.name }),
-          shirt ? h('p', { class: 'sub' }, [h('span', { text: shirt.name }), shirt.price ? h('b', { dir: 'ltr', text: money(shirt.price) }) : null]) : null,
+          shirt ? h('p', { class: 'sub' }, [h('span', { text: shirt.name }), priceOf(p.name, shirt.name) ? h('b', { dir: 'ltr', text: money(priceOf(p.name, shirt.name)) }) : null]) : null,
           p.blurred ? h('p', { class: 'note', text: p.note || IMMODEST_NOTE }) : (p.note ? h('p', { class: 'sec-hint', style: 'font-size:.88rem', text: p.note }) : null),
           h('button', { type: 'button', class: 'btn btn-small', text: 'הוספה להזמנה', onclick: function () { addItem(p.name, c.shirt, true); } })
         ])
@@ -613,7 +621,7 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
           function (v) { it.print = v; refresh('print-' + it.id); }),
         h('div', { class: 'two' }, [
           select('shirt-' + it.id, 'סוג חולצה', it.shirt,
-            cfg.shirts.map(function (s) { return { value: s.name, label: s.name + (s.price ? ' · ' + money(s.price) : '') }; }),
+            cfg.shirts.map(function (s) { var pr = priceOf(it.print, s.name); return { value: s.name, label: s.name + (pr ? ' · ' + money(pr) : '') }; }),
             'בחרו סוג', false,
             function (v) {
               it.shirt = v;
@@ -632,7 +640,7 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
             qtyOut,
             h('button', { type: 'button', text: '+', 'aria-label': 'עוד', onclick: function () { step(1); } })
           ]),
-          h('span', { class: 'price', id: 'line-' + it.id, dir: 'ltr', text: shirt ? money(shirt.price * it.qty) : '' })
+          h('span', { class: 'price', id: 'line-' + it.id, dir: 'ltr', text: shirt ? money(priceOf(it.print, shirt.name) * it.qty) : '' })
         ]),
         h('p', { class: 'err', id: 'err-' + it.id, hidden: true })
       ])
@@ -641,7 +649,7 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
       it.qty = Math.max(1, Math.min(20, it.qty + d));
       qtyOut.textContent = String(it.qty);
       var s = shirtBy(it.shirt);
-      $('line-' + it.id).textContent = s ? money(s.price * it.qty) : '';
+      $('line-' + it.id).textContent = s ? money(priceOf(it.print, s.name) * it.qty) : '';
       updateTotals();
     }
   }
@@ -655,7 +663,7 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
     state.items.forEach(function (it) {
       var s = shirtBy(it.shirt);
       count += it.qty;
-      if (s) sum += s.price * it.qty;
+      if (s) sum += priceOf(it.print, s.name) * it.qty;
     });
     return { count: count, sum: sum };
   }
@@ -816,7 +824,7 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
     return JSON.stringify([c.title, c.intro, c.payboxUrl, !!c.open, c.open ? '' : c.closedText,
       c.prints.map(function (p) {
         return [p.name, p.image || '', !!p.blurred, p.note || '', p.cover || 'front',
-          (p.variants || []).map(function (v) { return [v.shirt, v.images]; })];
+          (p.variants || []).map(function (v) { return [v.shirt, v.images, v.price || 0]; })];
       }),
       c.shirts.map(function (s) { return [s.name, s.price, s.sizes]; })]);
   }

@@ -80,13 +80,16 @@ function getConfig() {
     if (key) settings[key] = r[1];
   });
 
-  // תמונות לפי פרינט וסוג חולצה (מלפנים ומאחור)
+  // תמונות לפי פרינט וסוג חולצה (מלפנים ומאחור), ומחיר מיוחד לצירוף אם הוגדר
   const variants = {};
   rows_(ss, TABS.images).forEach(function (r) {
     const print = String(r[0] || '').trim();
     const images = [imageUrl_(r[2]), imageUrl_(r[3])].filter(String);
-    if (!print || !images.length) return;
-    (variants[print] = variants[print] || []).push({ shirt: String(r[1] || '').trim(), images: images });
+    const price = Number(r[4]);
+    const v = { shirt: String(r[1] || '').trim(), images: images };
+    if (price > 0) v.price = price;
+    if (!print || !(images.length || v.price)) return;
+    (variants[print] = variants[print] || []).push(v);
   });
 
   const prints = rows_(ss, TABS.prints)
@@ -158,9 +161,10 @@ function submitOrder(order) {
     if (shirt.sizes.indexOf(it.size) < 0) throw new Error('בחולצה ' + n + ' המידה לא זמינה');
     const qty = Math.floor(Number(it.qty));
     if (!(qty >= 1 && qty <= MAX_QTY)) throw new Error('בחולצה ' + n + ' הכמות לא תקינה');
-    const line = shirt.price * qty;
+    const price = priceOf_(print, shirt);
+    const line = price * qty;
     total += line;
-    return [now, orderId, name, phone, email, print.name, shirt.name, it.size, qty, shirt.price, line, 'כן', submitId];
+    return [now, orderId, name, phone, email, print.name, shirt.name, it.size, qty, price, line, 'כן', submitId];
   });
 
   const lock = LockService.getScriptLock();
@@ -193,6 +197,12 @@ function submitOrder(order) {
 
 /* ---------------- עזר ---------------- */
 
+/** מחיר לצירוף של פרינט וסוג חולצה: מחיר מיוחד מלשונית "תמונות" אם הוגדר, אחרת המחיר של סוג החולצה */
+function priceOf_(print, shirt) {
+  const v = (print.variants || []).filter(function (x) { return x.shirt === shirt.name && x.price > 0; })[0];
+  return v ? v.price : shirt.price;
+}
+
 function ensureTabs_(ss) {
   tab_(ss, TABS.orders, ORDER_HEADERS, [], function (sh) {
     sh.getRange('C:E').setNumberFormat('@');          // שם, טלפון ומייל כטקסט (שומר על 0 בתחילת הטלפון)
@@ -217,12 +227,13 @@ function ensureTabs_(ss) {
     sh.getRange('C1').setNote('כן = התמונה מוצגת מטושטשת ונפתחת רק בלחיצה. הערה מומלצת: ' + IMMODEST_NOTE);
   });
 
-  tab_(ss, TABS.images, ['פרינט', 'סוג חולצה', 'תמונה מלפנים', 'תמונה מאחור'], [
-    ['לוגו מסייעת', 'אוברסייז', 'mesayaat-oversize-front', 'mesayaat-oversize-back'],
-    ['לוגו מסייעת', 'טי רגילה', 'mesayaat-tee-front', 'mesayaat-tee-back'],
-    ['שלחי ניוד', 'אוברסייז', 'mesayaat-oversize-front', 'shalhi-oversize-back'],
-    ['שלחי ניוד', 'טי רגילה', 'mesayaat-tee-front', 'shalhi-tee-back']
+  tab_(ss, TABS.images, ['פרינט', 'סוג חולצה', 'תמונה מלפנים', 'תמונה מאחור', 'מחיר מיוחד'], [
+    ['לוגו מסייעת', 'אוברסייז', 'mesayaat-oversize-front', 'mesayaat-oversize-back', ''],
+    ['לוגו מסייעת', 'טי רגילה', 'mesayaat-tee-front', 'mesayaat-tee-back', ''],
+    ['שלחי ניוד', 'אוברסייז', 'mesayaat-oversize-front', 'shalhi-oversize-back', 100],
+    ['שלחי ניוד', 'טי רגילה', 'mesayaat-tee-front', 'shalhi-tee-back', 60]
   ], function (sh) {
+    sh.getRange('E1').setNote('מחיר לצירוף הזה של פרינט וסוג חולצה. ריק = המחיר מלשונית "חולצות".');
     sh.getRange('C1').setNote('שם של תמונה שנמצאת בתיקיית img באתר (בלי הסיומת), קישור שיתוף מגוגל דרייב עם גישה לכל מי שיש לו את הקישור, או כתובת תמונה.');
   });
 
