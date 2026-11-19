@@ -24,7 +24,7 @@ const DEFAULT_TITLE = 'חנות המרצ׳ של המסייעת';
 const DEFAULT_INTRO = 'בוחרים פרינט, סוג חולצה ומידה, משלמים בפייבוקס ושולחים. אפשר להזמין כמה חולצות בהזמנה אחת.';
 const DEFAULT_CLOSED = 'ההזמנות נסגרו. תודה לכל מי שהזמין.';
 const IMMODEST_NOTE = 'שימו לב: הפרינט הזה אינו צנוע ולכן מוצג מטושטש. לחיצה על התמונה תציג אותו בתצוגה מקדימה.';
-const SAMPLE_SIZES = 'S, M, L, XL, XXL, XXXL';
+const SAMPLE_SIZES = 'S, M, L, XL, XXL';
 const MAX_ITEMS = 30;
 const MAX_QTY = 20;
 
