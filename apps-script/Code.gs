@@ -1,3 +1,5 @@
+/** @OnlyCurrentDoc */
+
 /**
  * הזמנת חולצות צוותיות - Google Apps Script
  * הסקריפט צמוד לגיליון גוגל ומשמש כ"שרת" של האתר שב-GitHub Pages:
@@ -120,7 +122,7 @@ function getConfig() {
   return {
     title: String(settings['כותרת'] || DEFAULT_TITLE),
     intro: String(settings['טקסט פתיחה'] || DEFAULT_INTRO),
-    payboxUrl: String(settings['קישור פייבוקס'] || DEFAULT_PAYBOX),
+    payboxUrl: payboxUrl_(settings['קישור פייבוקס']),
     open: yes_(settings['פתוח להזמנות'], true),
     closedText: String(settings['הודעת סגירה'] || DEFAULT_CLOSED),
     prints: prints,
@@ -164,7 +166,7 @@ function submitOrder(order) {
     const price = priceOf_(print, shirt);
     const line = price * qty;
     total += line;
-    return [now, orderId, name, phone, email, print.name, shirt.name, it.size, qty, price, line, 'כן', submitId];
+    return [now, orderId, cellText_(name), cellText_(phone), cellText_(email), print.name, shirt.name, it.size, qty, price, line, 'כן', submitId];
   });
 
   const lock = LockService.getScriptLock();
@@ -196,6 +198,17 @@ function submitOrder(order) {
 }
 
 /* ---------------- עזר ---------------- */
+
+/** טקסט שהמזמין הקליד לא ייכתב לגיליון כנוסחה (למשל שם שמתחיל ב-=) */
+function cellText_(s) {
+  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+}
+
+/** רק קישור של פייבוקס יוצג באתר ככפתור תשלום */
+function payboxUrl_(v) {
+  const s = String(v || '').trim();
+  return /^https:\/\/([\w-]+\.)*payboxapp\.com\/[^\s"'<>]*$/i.test(s) ? s : DEFAULT_PAYBOX;
+}
 
 /** מחיר לצירוף של פרינט וסוג חולצה: מחיר מיוחד מלשונית "תמונות" אם הוגדר, אחרת המחיר של סוג החולצה */
 function priceOf_(print, shirt) {

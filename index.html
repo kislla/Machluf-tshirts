@@ -872,7 +872,7 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
     var done = !$('done').hidden;
     if (cfg.title) { $('siteTitle').textContent = cfg.title; document.title = cfg.title; }
     if (cfg.intro) $('siteIntro').textContent = cfg.intro;
-    if (cfg.payboxUrl) $('payLink').href = cfg.payboxUrl;
+    if (/^https:\/\/([\w-]+\.)*payboxapp\.com\//i.test(cfg.payboxUrl || '')) $('payLink').href = cfg.payboxUrl;   // only a PayBox link
     var ready = cfg.open && cfg.prints.length && cfg.shirts.length;
     $('closed').textContent = ready ? '' : (cfg.open ? 'האתר עוד לא מוכן להזמנות. נסו שוב מאוחר יותר.' : (cfg.closedText || 'ההזמנות סגורות כרגע.'));
     $('closed').hidden = !!ready || done;
