@@ -110,6 +110,30 @@ button, input, select { font: inherit; color: inherit; }
   padding: 8px 16px;
   text-align: center;
 }
+.countdown {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 16px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 6px 16px;
+  text-align: center;
+}
+.cd-label { font-weight: 600; font-size: 0.95rem; }
+.cd-clock { display: flex; gap: 6px; }
+.cd-unit {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 46px; padding: 3px 6px 2px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--bg) 12%, transparent);
+}
+.cd-unit b {
+  font-family: var(--display); font-weight: 700;
+  font-size: 1.7rem; line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--flag);
+}
+.cd-unit small { font-size: 0.72rem; font-weight: 600; opacity: 0.85; }
+.countdown.is-last-day .cd-unit b { color: #ff8a80; }
 .masthead { display: flex; flex-direction: column; gap: 14px; }
 .colorbar { display: flex; align-items: center; gap: 4px; }
 .colorbar i { width: 22px; height: 22px; display: block; }
@@ -296,6 +320,15 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
 </style>
 </head>
 <body dir="rtl">
+<div class="countdown" id="countdown" hidden>
+  <span class="cd-label" id="cdLabel"></span>
+  <span class="cd-clock" role="timer" aria-label="הזמן שנותר עד סגירת ההזמנות">
+    <span class="cd-unit"><b id="cdDays">0</b><small>ימים</small></span>
+    <span class="cd-unit"><b id="cdHours">00</b><small>שעות</small></span>
+    <span class="cd-unit"><b id="cdMins">00</b><small>דקות</small></span>
+    <span class="cd-unit"><b id="cdSecs">00</b><small>שניות</small></span>
+  </span>
+</div>
 <div class="demo-bar" id="demoBar" hidden>האתר עדיין בהקמה ואי אפשר לשלוח הזמנות. אל תשלמו בינתיים.</div>
 
 <div class="wrap">
@@ -865,7 +898,34 @@ footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--li
     $('secPrints').hidden = done;
     $('orderForm').hidden = done;
   }
+  /* ---------- countdown banner (display only; orders stay open after it ends) ---------- */
+  function startCountdown() {
+    var closeAt = Date.parse(String(window.SHIRTS_CLOSE_AT || ''));
+    if (!closeAt || closeAt <= Date.now()) return;
+    var d = new Date(closeAt), label;
+    try {
+      label = 'ההזמנות נסגרות ב' + new Intl.DateTimeFormat('he-IL', { timeZone: 'Asia/Jerusalem', weekday: 'long' }).format(d) +
+        ', ' + new Intl.DateTimeFormat('he-IL', { timeZone: 'Asia/Jerusalem', day: 'numeric', month: 'numeric' }).format(d).replace('/', '.') +
+        ' בשעה\u00a0' + new Intl.DateTimeFormat('he-IL', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit', hour12: false }).format(d);
+    } catch (e) { label = 'ההזמנות נסגרות בקרוב'; }
+    $('cdLabel').textContent = label;
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function tick() {
+      var left = Math.floor((closeAt - Date.now()) / 1000);
+      if (left <= 0) { $('countdown').hidden = true; clearInterval(timer); return; }
+      $('cdDays').textContent = Math.floor(left / 86400);
+      $('cdHours').textContent = pad(Math.floor(left % 86400 / 3600));
+      $('cdMins').textContent = pad(Math.floor(left % 3600 / 60));
+      $('cdSecs').textContent = pad(left % 60);
+      $('countdown').classList.toggle('is-last-day', left < 86400);
+    }
+    var timer = setInterval(tick, 1000);
+    tick();
+    $('countdown').hidden = false;
+  }
+
   function start() {
+    startCountdown();
     $('demoBar').hidden = LIVE;
     applyConfig(DEFAULTS, {});
     if (!LIVE) return;
